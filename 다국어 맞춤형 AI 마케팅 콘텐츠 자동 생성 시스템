@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AIGHT | Arban Hotel Marketing Agent</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap');
+
+:root {
+  /* Modern Indigo & Purple (Notion/Linear Style) Palette */
+  --sidebar-bg: #1e1b4b;       /* 딥 인디고 */
+  --sidebar-text: #c7d2fe;     /* 연한 인디고 텍스트 */
+  --sidebar-active: #312e81;   /* 메뉴 활성화 배경 */
+  --sidebar-active-text: #fff; /* 메뉴 활성화 글자 */
+
+  --purple-main: #6366f1;      /* 바이올렛 / 인디고 메인 */
+  --purple-dark: #4f46e5;      /* 포인트 바이올렛 / 주요 버튼 */
+  --purple-light: #eeeffe;     /* 연한 바이올렛 배경 */
+  --purple-line: #c7d2fe;      /* 바이올렛 경계선 */
+
+  --ink: #0f172a;              /* 메인 텍스트 */
+  --muted: #64748b;            /* 보조 텍스트 */
+  --line: #e2e8f0;             /* 경계선 */
+  --bg: #f8fafc;               /* 은은한 배경색 */
+  
+  --green: #10b981;
+  --red: #f43f5e;
+}
+
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); font-family: 'DM Sans', 'Noto Sans KR', sans-serif; color: var(--ink); }
+.app { display: flex; min-height: 100vh; }
+
+/* Linear 스타일 딥 인디고 사이드바 */
+.sidebar { 
+  width: 248px; 
+  background: var(--sidebar-bg); 
+  color: #fff; 
+  padding: 30px 18px; 
+  display: flex; 
+  flex-direction: column; 
+  flex-shrink: 0;
+}
+.brand { padding: 0 13px 30px; border-bottom: 1px solid #312e81; }
+.brand small { font-size: 11px; letter-spacing: 3px; color: #a5b4fc; font-weight: 800; }
+.brand h1 { font-size: 22px; margin: 8px 0 4px; letter-spacing: -.6px; color: #fff; }
+.brand p { margin: 0; color: var(--sidebar-text); font-size: 12px; }
+
+.nav-label { font-size: 10px; letter-spacing: 1.8px; color: #818cf8; font-weight: 700; padding: 25px 13px 10px; }
+.nav { display: grid; gap: 5px; }
+.nav button { 
+  border: 0; 
+  background: transparent; 
+  color: var(--sidebar-text); 
+  text-align: left; 
+  padding: 12px 13px; 
+  border-radius: 9px; 
+  font: 500 13px inherit; 
+  cursor: pointer; 
+  display: flex; 
+  gap: 12px; 
+  align-items: center;
+  transition: all 0.2s ease;
+}
+.nav button:hover { background: #2e2a72; color: #fff; }
+.nav button.active { background: var(--sidebar-active); color: var(--sidebar-active-text); font-weight: 700; border-left: 3px solid var(--purple-main); }
+.ico { width: 17px; text-align: center; font-size: 15px; }
+
+.hotel-chip { 
+  margin-top: auto; 
+  padding: 15px 13px; 
+  background: #2e2a72; 
+  border: 1px solid #4338ca; 
+  border-radius: 11px; 
+}
+.hotel-chip span { font-size: 10px; color: #a5b4fc; }
+.hotel-chip strong { display: block; margin-top: 6px; font-size: 14px; color: #fff; }
+.hotel-chip small { display: block; margin-top: 4px; color: var(--sidebar-text); font-size: 11px; }
+
+/* 메인 영역 */
+.main { flex: 1; min-width: 0; padding: 34px 42px 48px; max-width: 1600px; margin: 0 auto; width: calc(100% - 248px); }
+.topline { display: flex; justify-content: space-between; align-items: center; margin-bottom: 28px; }
+.crumb { font-size: 11px; letter-spacing: 1.5px; color: var(--muted); font-weight: 700; }
+.top-actions { display: flex; gap: 10px; align-items: center; }
+.date { font-size: 12px; color: var(--muted); }
+.avatar { width: 34px; height: 34px; border-radius: 50%; background: var(--purple-light); color: var(--purple-dark); display: grid; place-items: center; font-weight: 800; font-size: 12px; }
+
+.page-head { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 25px; }
+.page-head h2 { font-size: 29px; letter-spacing: -1.1px; margin: 5px 0 7px; color: var(--ink); }
+.page-head p { font-size: 13px; color: var(--muted); margin: 0; }
+.eyebrow { font-size: 10px; color: var(--purple-dark); letter-spacing: 1.6px; font-weight: 800; }
+
+.dropdown-wrap { position: relative; display: inline-block; }
+.period { border: 1px solid var(--line); background: #fff; padding: 9px 13px; border-radius: 8px; color: var(--muted); font-size: 12px; cursor: pointer; }
+.dropdown-menu { display: none; position: absolute; right: 0; top: 100%; margin-top: 5px; background: white; border: 1px solid var(--line); border-radius: 8px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); z-index: 10; min-width: 120px; }
+.dropdown-menu.show { display: block; }
+.dropdown-item { padding: 10px 14px; font-size: 12px; color: var(--ink); cursor: pointer; }
+.dropdown-item:hover { background: var(--purple-light); color: var(--purple-dark); }
+
+.notice { font-size: 11px; color: var(--purple-dark); background: var(--purple-light); border: 1px solid var(--purple-line); padding: 10px 13px; border-radius: 8px; margin-bottom: 20px; font-weight: 500; }
+
+.metrics { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 15px; margin-bottom: 18px; }
+.metric { background: white; border: 1px solid var(--line); border-radius: 12px; padding: 18px 19px; min-height: 122px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+.metric .label { font-size: 12px; color: var(--muted); font-weight: 600; }
+.metric .value { font-size: 27px; font-weight: 800; letter-spacing: -1px; margin-top: 11px; color: var(--ink); }
+.metric .sub { font-size: 10px; color: var(--muted); margin-top: 6px; }
+.up { color: var(--green) !important; }
+
+.grid { display: grid; grid-template-columns: 1.45fr 1fr; gap: 16px; margin-bottom: 17px; }
+.panel { background: white; border: 1px solid var(--line); border-radius: 12px; padding: 20px 21px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+.panel-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
+.panel h3 { font-size: 14px; margin: 0; font-weight: 700; color: var(--ink); }
+.panel-sub { font-size: 10px; color: var(--muted); margin: 5px 0 18px; }
+
+/* 인디고 차트 및 프로그래스바 */
+.chart { height: 190px; display: flex; align-items: flex-end; gap: 20px; padding: 5px 10px 0; border-bottom: 1px solid var(--line); position: relative; }
+.bar-col { flex: 1; height: 100%; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; gap: 8px; }
+.bar { width: min(34px, 70%); background: var(--purple-main); border-radius: 5px 5px 0 0; min-height: 12px; }
+.bar-col span { font-size: 10px; color: var(--muted); padding-bottom: 9px; }
+
+.keyword-list { display: grid; gap: 15px; margin-top: 18px; }
+.keyword { display: grid; grid-template-columns: 95px 1fr 32px; align-items: center; gap: 10px; font-size: 11px; }
+.track { height: 7px; border-radius: 10px; background: #f1f5f9; overflow: hidden; }
+.fill { height: 100%; border-radius: 10px; background: var(--purple-main); }
+.keyword b { font-size: 10px; color: var(--muted); text-align: right; }
+
+.review-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
+.review { background: white; border: 1px solid var(--line); border-radius: 12px; padding: 17px; display: flex; flex-direction: column; justify-content: space-between; position: relative; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+.pill { display: inline-block; border-radius: 5px; padding: 4px 7px; font-size: 10px; font-weight: 700; width: fit-content; background: var(--purple-light); color: var(--purple-dark); }
+.positive { background: #eaf5ef; color: #388363; }
+.negative { background: #fff0ee; color: #c36c64; }
+.review p { font-size: 12px; line-height: 1.7; color: #475569; margin: 13px 0 15px; }
+.review small { font-size: 10px; color: var(--muted); }
+
+.pages { display: none; }
+.pages.active { display: block; }
+.table { width: 100%; border-collapse: collapse; font-size: 12px; }
+.table th { text-align: left; color: var(--muted); font-weight: 600; font-size: 10px; padding: 11px; border-bottom: 1px solid var(--line); }
+.table td { padding: 13px 11px; border-bottom: 1px solid #f1f5f9; color: #475569; }
+
+.formrow { display: grid; grid-template-columns: 1fr 1fr; gap: 13px; margin: 15px 0; }
+.field label { display: block; font-size: 11px; color: var(--muted); margin-bottom: 7px; }
+.field select, .field textarea, .field input { width: 100%; border: 1px solid var(--line); border-radius: 8px; padding: 11px; background: #fff; color: var(--ink); font: 12px inherit; }
+.field textarea { height: 120px; resize: vertical; }
+
+.btn { background: var(--purple-dark); color: white; border: 0; border-radius: 8px; padding: 10px 15px; font-size: 12px; font-weight: 700; cursor: pointer; transition: background 0.2s ease; }
+.btn:hover { background: #3730a3; }
+.btn.secondary { background: white; border: 1px solid var(--line); color: #475569; }
+.btn.secondary:hover { background: var(--purple-light); color: var(--purple-dark); }
+
+.del-btn { position: absolute; top: 12px; right: 12px; background: transparent; border: 0; color: #cbd5e1; font-size: 16px; cursor: pointer; }
+.del-btn:hover { color: var(--red); }
+.toast { position: fixed; bottom: 25px; right: 25px; background: var(--sidebar-bg); color: white; padding: 12px 20px; border-radius: 8px; font-size: 12px; opacity: 0; transition: opacity 0.3s ease; pointer-events: none; z-index: 100; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.2); }
+.toast.show { opacity: 1; }
+.btn-group { display: flex; gap: 6px; margin-top: 10px; }
+
+@media(max-width: 1050px) {
+  .sidebar { width: 210px; }
+  .main { width: calc(100% - 210px); padding: 28px 24px; }
+  .metrics { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media(max-width: 720px) {
+  .app { display: block; }
+  .sidebar { width: 100%; padding: 16px; }
+  .brand { padding: 0 8px 15px; }
+  .nav-label, .hotel-chip { display: none; }
+  .nav { display: flex; overflow: auto; margin-top: 12px; }
+  .nav button { white-space: nowrap; }
+  .main { width: 100%; padding: 22px 15px; }
+  .grid, .review-grid { grid-template-columns: 1fr; }
+  .page-head { align-items: flex-start; gap: 12px; flex-direction: column; }
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand">
+      <small>AIGHT</small>
+      <h1>Hotel Marketing</h1>
+      <p>We make AI right</p>
+    </div>
+    <div class="nav-label">WORKSPACE</div>
+    <nav class="nav">
+      <button class="active" data-page="dashboard"><span class="ico">▦</span>대시보드</button>
+      <button data-page="reviews"><span class="ico">◷</span>리뷰 분석</button>
+      <button data-page="content"><span class="ico">✧</span>콘텐츠 생성</button>
+      <button data-page="prompts"><span class="ico">▤</span>프롬프트 보관함</button>
+      <button data-page="settings"><span class="ico">⚙</span>설정</button>
+    </nav>
+    <div class="hotel-chip">
+      <span>현재 분석 대상</span>
+      <strong id="sidebar-hotel-name">Arban Hotel</strong>
+      <small id="sidebar-hotel-loc">부산 부산진구 · 서면</small>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="topline">
+      <div class="crumb">AIGHT / HOTEL WORKSPACE</div>
+      <div class="top-actions">
+        <span class="date" id="current-date"></span>
+        <div class="avatar" id="header-avatar">AH</div>
+      </div>
+    </div>
+
+    <!-- 1. 대시보드 탭 -->
+    <section class="pages active" id="dashboard">
+      <div class="page-head">
+        <div>
+          <div class="eyebrow" id="dash-eyebrow">OVERVIEW / ARBAN HOTEL</div>
+          <h2>호텔 마케팅 대시보드</h2>
+          <p>아르반호텔의 고객 반응을 살펴보고 다음 마케팅 기회를 확인하세요.</p>
+        </div>
+        <div class="dropdown-wrap">
+          <button class="period" id="period-btn" onclick="toggleDropdown('dash-dropdown')">최근 6개월 ⌄</button>
+          <div class="dropdown-menu" id="dash-dropdown">
+            <div class="dropdown-item" onclick="selectPeriod('최근 1개월')">최근 1개월</div>
+            <div class="dropdown-item" onclick="selectPeriod('최근 3개월')">최근 3개월</div>
+            <div class="dropdown-item" onclick="selectPeriod('최근 6개월')">최근 6개월</div>
+            <div class="dropdown-item" onclick="selectPeriod('최근 1년')">최근 1년</div>
+          </div>
+        </div>
+      </div>
+      <div class="notice">글로벌 고객 데이터 및 Google Maps 리뷰 분석 기반 대시보드 시안입니다.</div>
+      <div class="metrics">
+        <div class="metric"><div class="label">리뷰 평점</div><div class="value">4.2 <span style="font-size:13px;color:#9aa4b2;font-weight:500">/ 5.0</span></div><div class="sub">Google 리뷰 기준 수집 데이터</div></div>
+        <div class="metric"><div class="label">분석 리뷰</div><div class="value">1,482</div><div class="sub">글로벌 방문객 누적 리뷰</div></div>
+        <div class="metric"><div class="label">긍정 리뷰</div><div class="value">78<span style="font-size:16px">%</span></div><div class="sub up">긍정 감성 분류 비율</div></div>
+        <div class="metric"><div class="label">주요 언어</div><div class="value">04</div><div class="sub">한국어 · 영어 · 일본어 · 중국어</div></div>
+      </div>
+      <div class="grid">
+        <div class="panel">
+          <div class="panel-head"><h3>월별 리뷰 흐름</h3><span class="muted">리뷰 수</span></div>
+          <div class="panel-sub" id="chart-sub">최근 6개월 · 글로벌 데이터</div>
+          <div class="chart">
+            <div class="bar-col"><div class="bar" style="height:58%"></div><span>6월</span></div>
+            <div class="bar-col"><div class="bar" style="height:69%"></div><span>7월</span></div>
+            <div class="bar-col"><div class="bar" style="height:80%"></div><span>8월</span></div>
+            <div class="bar-col"><div class="bar" style="height:64%"></div><span>9월</span></div>
+            <div class="bar-col"><div class="bar" style="height:90%"></div><span>10월</span></div>
+            <div class="bar-col"><div class="bar" style="height:100%"></div><span>11월</span></div>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-head"><h3>고객이 자주 언급한 주제</h3><span class="muted">언급 비중</span></div>
+          <div class="panel-sub">리뷰 핵심 키워드 분석</div>
+          <div class="keyword-list">
+            <div class="keyword"><span>위치 / 교통</span><div class="track"><div class="fill" style="width:88%"></div></div><b>88%</b></div>
+            <div class="keyword"><span>직원 서비스</span><div class="track"><div class="fill" style="width:76%"></div></div><b>76%</b></div>
+            <div class="keyword"><span>객실 청결</span><div class="track"><div class="fill" style="width:64%"></div></div><b>64%</b></div>
+            <div class="keyword"><span>객실 크기</span><div class="track"><div class="fill" style="width:48%"></div></div><b>48%</b></div>
+            <div class="keyword"><span>조식</span><div class="track"><div class="fill" style="width:35%"></div></div><b>35%</b></div>
+          </div>
+        </div>
+      </div>
+      <div class="panel" style="margin-bottom:15px">
+        <div class="panel-head"><h3>최근 리뷰 하이라이트</h3><span class="muted">대표 의견</span></div>
+        <div class="panel-sub">언어권별 대표 리뷰 요약</div>
+        <div class="review-grid">
+          <div class="review"><span class="pill positive">긍정</span><p>서면 중심가와 가까워 이동하기 편했어요.</p><small>위치 · 접근성</small></div>
+          <div class="review"><span class="pill positive">긍정</span><p>직원분들이 친절하게 안내해 주셨습니다.</p><small>직원 서비스</small></div>
+          <div class="review"><span class="pill negative">개선 의견</span><p>객실 내 시설 관리가 조금 더 필요해 보여요.</p><small>객실 관리</small></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. 리뷰 분석 탭 -->
+    <section class="pages" id="reviews">
+      <div class="page-head">
+        <div><div class="eyebrow">CUSTOMER VOICE</div><h2>Google 리뷰 분석</h2><p>고객이 남긴 평가에서 호텔의 강점과 개선 지점을 찾습니다.</p></div>
+      </div>
+      <div class="notice">글로벌 방문객 데이터를 분석하여 감성 분류 및 주요 키워드를 도출한 결과입니다.</div>
+      <div class="metrics">
+        <div class="metric"><div class="label">긍정 리뷰</div><div class="value">78%</div><div class="sub">감성 데이터</div></div>
+        <div class="metric"><div class="label">보통 리뷰</div><div class="value">14%</div><div class="sub">감성 데이터</div></div>
+        <div class="metric"><div class="label">부정 리뷰</div><div class="value">8%</div><div class="sub">감성 데이터</div></div>
+        <div class="metric"><div class="label">분석 언어</div><div class="value">4개</div><div class="sub">한국어 · 영어 · 일본어 · 중국어</div></div>
+      </div>
+      <div class="grid">
+        <div class="panel">
+          <h3>언어별 리뷰 비중</h3>
+          <div class="panel-sub">타깃 언어권 분포</div>
+          <div class="keyword-list">
+            <div class="keyword"><span>한국어</span><div class="track"><div class="fill" style="width:42%"></div></div><b>42%</b></div>
+            <div class="keyword"><span>영어</span><div class="track"><div class="fill" style="width:28%"></div></div><b>28%</b></div>
+            <div class="keyword"><span>일본어</span><div class="track"><div class="fill" style="width:18%"></div></div><b>18%</b></div>
+            <div class="keyword"><span>중국어</span><div class="track"><div class="fill" style="width:12%"></div></div><b>12%</b></div>
+          </div>
+        </div>
+        <div class="panel">
+          <h3>분석 요약 및 인사이트</h3>
+          <div class="panel-sub">마케팅 개선 반영점</div>
+          <p style="font-size:12px;line-height:1.9;color:#536176">서면역과의 위치 및 교통 편의성이 88%로 가장 높게 평가받는 주요 강점입니다. 해외 관광객 대상 다국어 홍보 시 서면 중심가 위치를 최우선 강조하고, 객실 청결 및 시설 관리 관련 개선 의견은 프로모션 및 안내문 개정 시 사전 반영이 권장됩니다.</p>
+        </div>
+      </div>
+      <div class="panel">
+        <h3>리뷰 원문 예시</h3>
+        <div class="panel-sub">언어 및 감성 분류 상세</div>
+        <table class="table">
+          <thead><tr><th>평점</th><th>리뷰 내용</th><th>언어</th><th>분류</th></tr></thead>
+          <tbody>
+            <tr><td>★★★★★</td><td>위치가 좋아서 서면 주변을 둘러보기 편했습니다.</td><td>한국어</td><td><span class="pill positive">긍정</span></td></tr>
+            <tr><td>★★★★☆</td><td>Staff were helpful and the room was comfortable.</td><td>영어</td><td><span class="pill positive">긍정</span></td></tr>
+            <tr><td>★★★☆☆</td><td>部屋の設備は少し古く感じました。</td><td>일본어</td><td><span class="pill negative">개선 의견</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 3. 콘텐츠 생성 탭 -->
+    <section class="pages" id="content">
+      <div class="page-head">
+        <div><div class="eyebrow">CONTENT STUDIO</div><h2>호텔 마케팅 콘텐츠 생성</h2><p>핵심 키워드와 프롬프트 조합으로 다국어 콘텐츠 및 FAQ를 자동 생성합니다.</p></div>
+      </div>
+      <div class="grid">
+        <div class="panel">
+          <h3>콘텐츠 설정</h3>
+          <div class="formrow">
+            <div class="field">
+              <label>콘텐츠 언어</label>
+              <select id="lang">
+                <option value="한국어">한국어</option>
+                <option value="English">English</option>
+                <option value="日本語">日本語</option>
+                <option value="中文">中文</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>게시 채널</label>
+              <select id="channel">
+                <option value="인스타그램">인스타그램</option>
+                <option value="네이버 블로그">네이버 블로그</option>
+                <option value="Google 비즈니스 프로필">Google 비즈니스 프로필</option>
+                <option value="이메일 뉴스레터">이메일 뉴스레터</option>
+                <option value="디지털 디스플레이">디지털 디스플레이 (안내문)</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>홍보 목적</label>
+              <select id="purpose">
+                <option value="호텔 위치와 접근성 강조">호텔 위치와 접근성 강조</option>
+                <option value="객실 및 편의시설 소개">객실 및 편의시설 소개</option>
+                <option value="시즌 패키지 및 이벤트 안내">시즌 패키지 및 이벤트 안내</option>
+                <option value="친절한 서비스 강조">친절한 서비스 강조</option>
+                <option value="고객 FAQ 및 프로모션">고객 FAQ 및 프로모션</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>문체 (톤앤매너)</label>
+              <select id="tone">
+                <option value="친근하고 자연스럽게">친근하고 자연스럽게</option>
+                <option value="고급스럽고 차분하게">고급스럽고 차분하게</option>
+                <option value="짧고 눈에 띄게">짧고 눈에 띄게</option>
+              </select>
+            </div>
+          </div>
+          <div class="field">
+            <label>추가 요청 (또는 프롬프트 라이브러리 자동 적용란)</label>
+            <textarea id="extra-req" placeholder="예: 서면역 7번 출구 접근성 및 주변 전통시장 맛집 정보를 강조해 주세요."></textarea>
+          </div>
+          <button class="btn" onclick="makeCopy()">콘텐츠 초안 만들기</button>
+        </div>
+        <div class="panel">
+          <h3>생성 결과 미리보기</h3>
+          <div class="panel-sub" id="draft-meta">선택한 조건에 맞춘 다국어 콘텐츠</div>
+          <div id="draft" style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:9px;padding:18px;min-height:180px;font-size:13px;line-height:1.9;color:#475569;white-space:pre-wrap;">왼쪽에서 콘텐츠 조건을 선택하거나 프롬프트 보관함에서 적용할 문구를 선택한 뒤 초안을 만들어 보세요.</div>
+          <button class="btn secondary" style="margin-top:13px" onclick="copyDraft()">문구 복사</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. 프롬프트 보관함 탭 -->
+    <section class="pages" id="prompts">
+      <div class="page-head">
+        <div>
+          <div class="eyebrow">PROMPT LIBRARY</div>
+          <h2>프롬프트 보관함</h2>
+          <p>담당자가 변경되더라도 기존 마케팅 방향과 제작 기준을 표준화하여 일관성을 유지합니다.</p>
+        </div>
+      </div>
+
+      <!-- 새 프롬프트 저장 폼 -->
+      <div class="panel" style="margin-bottom: 20px;">
+        <h3>새 마케팅 프롬프트 등록 (표준화 관리)</h3>
+        <div class="formrow" style="grid-template-columns: 1fr 2fr;">
+          <div class="field">
+            <label>카테고리 선택</label>
+            <select id="new-prompt-tag">
+              <option value="SNS 마케팅">SNS 마케팅</option>
+              <option value="다국어 번역 / 홍보">다국어 번역 / 홍보</option>
+              <option value="이메일 / 뉴스레터">이메일 / 뉴스레터</option>
+              <option value="디지털 디스플레이 / FAQ">디지털 디스플레이 / FAQ</option>
+              <option value="리뷰 분석 / 성과 개선">리뷰 분석 / 성과 개선</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>프롬프트 제목</label>
+            <input id="new-prompt-title" placeholder="예: [서면역 접근성] 다국어 인스타그램 홍보 템플릿">
+          </div>
+        </div>
+        <div class="field">
+          <label>프롬프트 지시문 (보관함 저장 지시문)</label>
+          <textarea id="new-prompt-content" style="height: 70px;" placeholder="국가별 문화와 언어 특성을 반영한 마케팅 지시문 프롬프트를 등록하세요."></textarea>
+        </div>
+        <button class="btn" style="margin-top: 5px;" onclick="addPrompt()">+ 프롬프트 라이브러리에 저장</button>
+      </div>
+
+      <!-- 보관된 프롬프트 카드 목록 -->
+      <div class="review-grid" id="prompt-container">
+        <div class="review">
+          <button class="del-btn" onclick="deletePrompt(this)" title="삭제">×</button>
+          <div>
+            <span class="pill">SNS 마케팅</span>
+            <p><b>[위치강조] 서면 접근성 홍보</b><br><span class="prompt-text">부산 여행의 중심인 서면역과의 접근성과 주변 맛집 및 관광지 이동 편의성을 강조한 다국어 SNS 홍보 문구를 작성해 주세요.</span></p>
+          </div>
+          <div class="btn-group">
+            <button class="btn" style="flex:1; font-size:11px;" onclick="usePromptToGenerate(this)">이 프롬프트로 콘텐츠 생성 ➔</button>
+            <button class="btn secondary" style="font-size:11px;" onclick="copyPromptText(this)">문구 복사</button>
+          </div>
+        </div>
+
+        <div class="review">
+          <button class="del-btn" onclick="deletePrompt(this)" title="삭제">×</button>
+          <div>
+            <span class="pill">이메일 / 뉴스레터</span>
+            <p><b>[시즌 패키지] 다국어 이메일 안내</b><br><span class="prompt-text">호텔의 얼리버드 숙박 패키지 및 특별 혜택 정보를 언어권별 고객 특성에 맞추어 정중하고 직관적인 뉴스레터 형식으로 작성해 주세요.</span></p>
+          </div>
+          <div class="btn-group">
+            <button class="btn" style="flex:1; font-size:11px;" onclick="usePromptToGenerate(this)">이 프롬프트로 콘텐츠 생성 ➔</button>
+            <button class="btn secondary" style="font-size:11px;" onclick="copyPromptText(this)">문구 복사</button>
+          </div>
+        </div>
+
+        <div class="review">
+          <button class="del-btn" onclick="deletePrompt(this)" title="삭제">×</button>
+          <div>
+            <span class="pill">리뷰 분석 / 성과 개선</span>
+            <p><b>[데이터기반] 고객 리뷰 개선점 피드백</b><br><span class="prompt-text">Google Maps 리뷰 분석 결과를 바탕으로 고객이 언급한 주요 불만 사항을 정리하고, 이를 개선하기 위한 마케팅 및 프로모션 기획 방향을 제시해 주세요.</span></p>
+          </div>
+          <div class="btn-group">
+            <button class="btn" style="flex:1; font-size:11px;" onclick="usePromptToGenerate(this)">이 프롬프트로 콘텐츠 생성 ➔</button>
+            <button class="btn secondary" style="font-size:11px;" onclick="copyPromptText(this)">문구 복사</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. 설정 탭 -->
+    <section class="pages" id="settings">
+      <div class="page-head">
+        <div><div class="eyebrow">WORKSPACE SETTINGS</div><h2>설정</h2><p>분석 대상 호텔과 화면 표시 옵션을 관리합니다.</p></div>
+      </div>
+      <div class="panel" style="max-width:720px">
+        <h3>호텔 정보 설정</h3>
+        <div class="formrow">
+          <div class="field"><label>호텔명</label><input id="input-hotel-name" value="Arban Hotel"></div>
+          <div class="field"><label>지역</label><input id="input-hotel-loc" value="부산광역시 부산진구 서면"></div>
+        </div>
+        <div class="field">
+          <label>Google Maps 링크 (리뷰 데이터 연동)</label>
+          <div style="display:flex; gap:8px;">
+            <input id="input-gmaps-link" value="https://maps.app.goo.gl/Pu4m5EvnPip9uGMG6">
+            <button class="btn secondary" style="white-space:nowrap;" onclick="connectGmaps()">연동하기</button>
+          </div>
+        </div>
+        <div style="margin-top: 24px; padding-top: 18px; border-top: 1px solid var(--line); display: flex; justify-content: flex-end;">
+          <button class="btn" style="padding: 12px 25px; font-size: 13px;" onclick="saveSettings()">설정 저장하기</button>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<div id="toast" class="toast">처리되었습니다!</div>
+
+<script>
+// 당일 날짜 자동 세팅
+function setRealTimeDate() {
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = String(today.getMonth() + 1).padStart(2, '0');
+  const day = String(today.getDate()).padStart(2, '0');
+  
+  const dateElement = document.getElementById('current-date');
+  if (dateElement) {
+    dateElement.textContent = `${year}. ${month}. ${day}`;
+  }
+}
+
+// 탭 전환
+document.querySelectorAll('.nav button').forEach(btn => btn.addEventListener('click', () => {
+  switchTab(btn.dataset.page);
+}));
+
+function switchTab(pageId) {
+  document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.pages').forEach(p => p.classList.remove('active'));
+  
+  const targetBtn = document.querySelector(`.nav button[data-page="${pageId}"]`);
+  if (targetBtn) targetBtn.classList.add('active');
+  
+  const targetPage = document.getElementById(pageId);
+  if (targetPage) targetPage.classList.add('active');
+}
+
+// 대시보드 드롭다운
+function toggleDropdown(id) {
+  document.getElementById(id).classList.toggle('show');
+}
+
+window.onclick = function(event) {
+  if (!event.target.matches('.period')) {
+    const dropdowns = document.getElementsByClassName('dropdown-menu');
+    for (let i = 0; i < dropdowns.length; i++) {
+      dropdowns[i].classList.remove('show');
+    }
+  }
+}
+
+function selectPeriod(text) {
+  document.getElementById('period-btn').innerText = text + ' ⌄';
+  document.getElementById('chart-sub').innerText = text + ' · 수집 데이터';
+  showToast(text + ' 데이터로 변경되었습니다.');
+}
+
+// 콘텐츠 생성 로직
+function makeCopy() {
+  const lang = document.getElementById('lang').value;
+  const channel = document.getElementById('channel').value;
+  const purpose = document.getElementById('purpose').value;
+  const tone = document.getElementById('tone').value;
+  const extra = document.getElementById('extra-req').value.trim();
+  const hotelName = document.getElementById('sidebar-hotel-name').textContent;
+
+  let result = `[${channel} - ${lang} 마케팅 초안]\n\n`;
+  if (lang === '한국어') {
+    result += `부산 여행의 중심, 서면에서 편안한 하루를 시작해 보세요. ${hotelName}에서 도심 속 완벽한 휴식과 편리한 이동을 동시에 경험하실 수 있습니다.\n\n- 주요 강조사항: ${purpose}`;
+  } else if (lang === 'English') {
+    result += `Make the most of your Busan stay. Enjoy the convenience of Seomyeon and discover the city effortlessly from ${hotelName}.\n\n- Key Highlight: ${purpose}`;
+  } else if (lang === '日本語') {
+    result += `釜山旅行の拠点に、便利な西面エリアの${hotelName}。街歩きやグルメを楽しむ快適な滞在をお届けします。\n\n- 重点事項: ${purpose}`;
+  } else {
+    result += `以西面为起点，轻松探索釜山。入住${hotelName}，享受便捷舒适的城市之旅。\n\n- 核心亮点: ${purpose}`;
+  }
+
+  result += `\n\n(적용 톤앤매너: ${tone})`;
+  if (extra) result += `\n(프롬프트 지시사항 반영: ${extra})`;
+
+  document.getElementById('draft-meta').innerText = `${lang} · ${channel} · ${purpose}`;
+  document.getElementById('draft').textContent = result;
+  showToast('마케팅 콘텐츠 초안이 생성되었습니다.');
+}
+
+function copyDraft() {
+  const content = document.getElementById('draft').textContent;
+  if (!content || content.includes('선택한 뒤 초안을')) {
+    showToast('복사할 내용이 없습니다.');
+    return;
+  }
+  navigator.clipboard?.writeText(content).then(() => showToast('클립보드에 문구가 복사되었습니다!'));
+}
+
+// 프롬프트 신규 보관함 저장
+function addPrompt() {
+  const tag = document.getElementById('new-prompt-tag').value;
+  const title = document.getElementById('new-prompt-title').value.trim();
+  const content = document.getElementById('new-prompt-content').value.trim();
+
+  if (!title || !content) {
+    showToast('제목과 지시문 내용을 모두 입력해 주세요.');
+    return;
+  }
+
+  const container = document.getElementById('prompt-container');
+  const card = document.createElement('div');
+  card.className = 'review';
+  card.innerHTML = `
+    <button class="del-btn" onclick="deletePrompt(this)" title="삭제">×</button>
+    <div>
+      <span class="pill">${tag}</span>
+      <p><b>${title}</b><br><span class="prompt-text">${content}</span></p>
+    </div>
+    <div class="btn-group">
+      <button class="btn" style="flex:1; font-size:11px;" onclick="usePromptToGenerate(this)">이 프롬프트로 콘텐츠 생성 ➔</button>
+      <button class="btn secondary" style="font-size:11px;" onclick="copyPromptText(this)">문구 복사</button>
+    </div>
+  `;
+
+  container.prepend(card);
+
+  document.getElementById('new-prompt-title').value = '';
+  document.getElementById('new-prompt-content').value = '';
+  showToast('프롬프트 라이브러리에 성공적으로 저장되었습니다.');
+}
+
+// 프롬프트 단순 복사
+function copyPromptText(btnElement) {
+  const promptText = btnElement.closest('.review').querySelector('.prompt-text').textContent;
+  navigator.clipboard?.writeText(promptText).then(() => {
+    showToast('프롬프트가 클립보드에 복사되었습니다.');
+  });
+}
+
+// [이 프롬프트로 콘텐츠 생성] 클릭 시 -> 추가 요청란에 입력시키며 콘텐츠 생성 탭으로 전환
+function usePromptToGenerate(btnElement) {
+  const promptText = btnElement.closest('.review').querySelector('.prompt-text').textContent;
+  document.getElementById('extra-req').value = promptText;
+  switchTab('content');
+  showToast('선택한 프롬프트가 적용되었습니다. [콘텐츠 초안 만들기]를 누르세요.');
+}
+
+// 프롬프트 삭제
+function deletePrompt(btnElement) {
+  if (confirm('이 프롬프트를 라이브러리에서 삭제하시겠습니까?')) {
+    btnElement.closest('.review').remove();
+    showToast('프롬프트가 삭제되었습니다.');
+  }
+}
+
+// 설정 저장
+function saveSettings() {
+  const newName = document.getElementById('input-hotel-name').value.trim();
+  const newLoc = document.getElementById('input-hotel-loc').value.trim();
+  
+  if (newName) {
+    document.getElementById('sidebar-hotel-name').textContent = newName;
+    document.getElementById('dash-eyebrow').textContent = `OVERVIEW / ${newName.toUpperCase()}`;
+    document.getElementById('header-avatar').textContent = newName.substring(0, 2).toUpperCase();
+  }
+  if (newLoc) {
+    document.getElementById('sidebar-hotel-loc').textContent = newLoc;
+  }
+  showToast('호텔 설정 정보가 저장되었습니다.');
+}
+
+function connectGmaps() {
+  const link = document.getElementById('input-gmaps-link').value.trim();
+  if(!link) {
+    showToast('Google Maps 링크를 입력해주세요.');
+    return;
+  }
+  showToast('Google Maps 리뷰 수집 연동이 완료되었습니다.');
+}
+
+window.addEventListener('DOMContentLoaded', setRealTimeDate);
+</script>
+</body>
+</html>
